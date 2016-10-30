@@ -1,0 +1,260 @@
+<!--
+	This node is copyright (c) Peter Scargill - but as I've had so
+	many ideas from others - consider it free to use for whatever
+	purpose you like. If you redesign it please remember to drop
+	my name and link in there somewhere. http://tech.scargill.net
+	This software puts out one of two messages on change of state 
+    which could be sent to the MQTT node, tests every minute and can
+	be over-ridden manually.
+-->
+
+<script type="text/x-red" data-template-name="mytimer">
+
+     <div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+     </div>
+
+<script type="text/x-red" data-help-name="mytimer">
+    	<p>DawnDusktimer sends messages at dawn and dusk, and another message at a random time around dawn or dusk.</p>
+	<p>The first output sends out a message on time (and if repeat is ticked - every minute)</p>
+	<p>The second output simply sends the state - 1 or 0 every minute. </p>
+	<p>The third output sends an optional message for both states - suitable for speech output or a log.</p>
+	<p>The input can be used a trigger (internal 1 minute timer or manual override via the input. The message can be 1/on, 0/off or auto/default (the input can be used to leave the scheduler to it's own devices and/or to trigger it instantly).</p>
+	<p>Manual On/Off overrides time-out after 8 hours OR at change of schedule.</p>
+   	<p>Start/End offsets can be fixed or random (tick the box) within the offset period specified. Schedule can be paused by the interface tick box or by the "manual" command ("auto" command to return to normal)</p>
+</script>
+	 
+	<div class="form-row">
+        <label for="node-input-dawnweekday"><i class="fa fa-clock-o"></i> WKday min</label>
+        <select id="node-input-dawnweekday" style="width:73% !important">
+            <option value="300">05:00</option>
+            <option value="315">05:15</option>
+            <option value="330">05:30</option>
+            <option value="345">05:45</option>
+            <option value="360">06:00</option>
+            <option value="375">06:15</option>
+            <option value="390">06:30</option>
+            <option value="405">06:45</option>
+            <option value="420">07:00</option>
+            <option value="435">07:15</option>
+            <option value="450">07:30</option>
+            <option value="465">07:45</option>
+            <option value="480">08:00</option>
+            <option value="495">08:15</option>
+            <option value="510">08:30</option>
+            <option value="525">08:45</option>
+            <option value="540">09:00</option>
+            <option value="555">09:15</option>
+            <option value="570">09:30</option>
+            <option value="585">09:45</option>
+            <option value="600">10:00</option>
+            <option value="615">10:15</option>
+            <option value="630">10:30</option>
+            <option value="645">10:45</option>
+            <option value="660">11:00</option>
+        </select>
+    </div>
+	
+	 <div class="form-row">
+        <label for="node-input-duskweekday"><i class="fa fa-clock-o"></i> WKday max</label>
+        <select id="node-input-duskweekday" style="width:73% !important">
+            <option value="1020">17:00</option>
+            <option value="1035">17:15</option>
+            <option value="1050">17:30</option>
+            <option value="1065">17:45</option>
+            <option value="1080">18:00</option>
+            <option value="1095">18:15</option>
+            <option value="1110">18:30</option>
+            <option value="1125">18:45</option>
+            <option value="1140">19:00</option>
+            <option value="1155">19:15</option>
+            <option value="1170">19:30</option>
+            <option value="1185">19:45</option>
+            <option value="1200">20:00</option>
+            <option value="1215">20:15</option>
+            <option value="1230">20:30</option>
+            <option value="1245">20:45</option>
+            <option value="1260">21:00</option>
+            <option value="1275">21:15</option>
+            <option value="1290">21:30</option>
+            <option value="1305">21:45</option>
+            <option value="1320">22:00</option>
+            <option value="1335">22:15</option>
+            <option value="1350">22:30</option>
+            <option value="1365">22:45</option> 
+	    <option value="1380">23:00</option>
+        </select>
+    </div>
+			
+	<div class="form-row">
+        <label for="node-input-dawnweekend"><i class="fa fa-clock-o"></i> WKND min</label>
+        <select id="node-input-dawnweekend" style="width:73% !important">
+            <option value="300">05:00</option>
+            <option value="315">05:15</option>
+            <option value="330">05:30</option>
+            <option value="345">05:45</option>
+            <option value="360">06:00</option>
+            <option value="375">06:15</option>
+            <option value="390">06:30</option>
+            <option value="405">06:45</option>
+            <option value="420">07:00</option>
+            <option value="435">07:15</option>
+            <option value="450">07:30</option>
+            <option value="465">07:45</option>
+            <option value="480">08:00</option>
+            <option value="495">08:15</option>
+            <option value="510">08:30</option>
+            <option value="525">08:45</option>
+            <option value="540">09:00</option>
+            <option value="555">09:15</option>
+            <option value="570">09:30</option>
+            <option value="585">09:45</option>
+            <option value="600">10:00</option>
+            <option value="615">10:15</option>
+            <option value="630">10:30</option>
+            <option value="645">10:45</option>
+            <option value="660">11:00</option>
+        </select>
+    </div>
+	
+	 <div class="form-row">
+        <label for="node-input-duskweekend"><i class="fa fa-clock-o"></i> WKND max</label>
+        <select id="node-input-duskweekend" style="width:73% !important">
+            <option value="1020">17:00</option>
+            <option value="1035">17:15</option>
+            <option value="1050">17:30</option>
+            <option value="1065">17:45</option>
+            <option value="1080">18:00</option>
+            <option value="1095">18:15</option>
+            <option value="1110">18:30</option>
+            <option value="1125">18:45</option>
+            <option value="1140">19:00</option>
+            <option value="1155">19:15</option>
+            <option value="1170">19:30</option>
+            <option value="1185">19:45</option>
+            <option value="1200">20:00</option>
+            <option value="1215">20:15</option>
+            <option value="1230">20:30</option>
+            <option value="1245">20:45</option>
+            <option value="1260">21:00</option>
+            <option value="1275">21:15</option>
+            <option value="1290">21:30</option>
+            <option value="1305">21:45</option>
+            <option value="1320">22:00</option>
+            <option value="1335">22:15</option>
+            <option value="1350">22:30</option>
+            <option value="1365">22:45</option> 
+	    <option value="1380">23:00</option>
+
+        </select>
+    </div>
+
+	<div class="form-row">
+		<label for="node-input-dawnminoff"><i class="fa fa-clock-o"></i> Dwn - offset</label>
+		<input type="text" id="node-input-dawnminoff" placeholder="0">
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-dawnplusoff"><i class="fa fa-clock-o"></i> Dwn + offset</label>
+		<input type="text" id="node-input-dawnplusoff" placeholder="0">
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-duskminoff"><i class="fa fa-clock-o"></i> Dsk - offset</label>
+		<input type="text" id="node-input-duskminoff" placeholder="0">
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-duskplusoff"><i class="fa fa-clock-o"></i> Dsk + offset</label>
+		<input type="text" id="node-input-duskplusoff" placeholder="0">
+	</div>
+	
+	<div class="form-row">	
+		<label for="node-input-lat"><i class="fa fa-globe"></i> Latitude</label>
+		<input type="text" id="node-input-lat" placeholder="51.025">
+	</div>
+  
+	<div class="form-row">
+		<label for="node-input-lon"><i class="fa fa-globe"></i> Longitude</label>
+		<input type="text" id="node-input-lon" placeholder="-1.4">
+	</div>
+
+  
+	<div class="form-row">
+		<label for="node-input-outtopic"><i class="fa fa-tag"></i> Topic</label>
+		<input type="text" id="node-input-outtopic" placeholder="MQTT Topic">
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-outpayloaddawn1"><i class="fa fa-tag"></i> Dawn Msg</label>
+		<input type="text" id="node-input-outpayloaddawn1" placeholder="MQTT Payload">
+	</div>
+	<div class="form-row">
+		<label for="node-input-outpayloaddawn2"><i class="fa fa-tag"></i> Dawn* Msg</label>
+		<input type="text" id="node-input-outpayloaddawn2" placeholder="MQTT Payload">
+	</div>
+	
+	<div class="form-row">
+		<label for="node-input-outpayloaddusk1"><i class="fa fa-tag"></i> Dusk Msg</label>
+		<input type="text" id="node-input-outpayloaddusk1" placeholder="MQTT Payload">
+	</div>
+	<div class="form-row">
+		<label for="node-input-outpayloaddusk2"><i class="fa fa-tag"></i> Dusk* Msg</label>
+		<input type="text" id="node-input-outpayloaddusk2" placeholder="MQTT Payload">
+	</div>
+	
+
+	
+</script>
+
+<script type="text/x-red" data-help-name="mytimer">
+    <p>Uses the suncalc module and timing options to generate a topic and one of two messages from output 1 - checked every minute)</p>
+    <p>The Dawn and Dusk offsets can be both positive (+ve) for minutes later or negative (-ve) for minutes earlier.</p>
+	<p>Output 1 outputs only when the manual input is pressed or when the CHANGE occurs. Output 2 simply sends "1" or "0" to the payload every minute regardless</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('mytimer',{
+        category: 'Averell',
+        color:"#99ff00",
+        defaults: {
+		dawnweekday: {value:"420", required: true},
+		duskweekday: {value:"1320", required: true},
+		dawnweekend: {value:"540", required: true},
+		duskweekend: {value:"1320", required: true},
+		dawnminoff: {value:"5", required: true},
+		dawnplusoff: {value:"30", required: true},
+		duskminoff: {value:"20", required: true},
+		duskplusoff: {value:"10", required: true},
+		outpayloaddawn2: {value:"Dawn!"}, 
+        	outtopic: {value:""},
+        	outpayloaddawn1: {value:""},
+        	outpayloaddawn2: {value:""},
+        	outpayloaddusk1: {value:""},
+        	outpayloaddusk2: {value:""},
+		name: {value:"My Timer"},
+        	lat: {value:"", required:true, validate:RED.validators.number()},
+        	lon: {value:"", required:true, validate:RED.validators.number()},
+	},
+        inputs:1,
+        outputs:1,
+        icon: "timer.png",
+        label: function() {
+            return this.name||"mytimer";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+            if (($("#node-input-lat").val() === "") && ($("#node-input-lon").val() === "")) {
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        $("#node-input-lat").val(Number(position.coords.latitude.toFixed(5)));
+                        $("#node-input-lon").val(Number(position.coords.longitude.toFixed(5)));
+                    });
+                }
+            }
+        }
+    });
+</script>

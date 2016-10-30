@@ -1,0 +1,29 @@
+{
+    "name": "node-red-contrib-mytimer",
+    "version": "0.0.1",
+    "description": "A Node-RED node that handles many different timers, including sunrise/set, offsets and alarms",
+    "dependencies": {
+        "suncalc": ">=1.7.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/averelll/node-red-contrib-mytimer.git"
+    },
+    "license": "Apache-2.0",
+    "keywords": [
+        "node-red",
+        "suncalc",
+        "alarm",
+        "timer"
+    ],
+    "node-red": {
+        "nodes": {
+            "mytimer": "mytimer.js"
+        }
+    },
+    "author": "Ferd Scheepers",
+    "bugs": {
+        "url": "https://github.com/averelll/node-red-contrib-mytimer/issues"
+    },
+    "homepage": "https://github.com/averelll/node-red-contrib-mytimer#readme"
+}
